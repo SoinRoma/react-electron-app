@@ -39,7 +39,7 @@
     "electron-dev": "set ELECTRON_START_URL=http://localhost:3000 && electron .",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "package-windows": "electron-packager . app --overwrite --asar --platform=win32 --arch=ia32 --icon=Favicon.ico --prune=true --out=release --version-string.CompanyName='Soin Roman'  --version-string.ProductName='App'",
+    "package-windows": "electron-packager . app --overwrite --asar --platform=win32 --arch=ia32 --icon=Favicon.ico --prune=true --out=release --version-string.CompanyName='Soin Roman'  --version-string.ProductName='App' --protocol=app --protocol-name='app'",
     "windows-installer": "node createinstaller.js"
   },
   "eslintConfig": {
@@ -65,12 +65,25 @@
   },
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "protocols": [
+          {
+            "name": "Electron Fiddle",
+            "schemes": ["electron-fiddle"]
+          }
+        ]
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
             "name": "react-electron-app"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {
+            "mimeType": ["x-scheme-handler/electron-fiddle"]
           }
         },
         {

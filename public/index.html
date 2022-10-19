@@ -9,4 +9,11 @@
   <body>
     <div id="root"></div>
   </body>
+
+  <script>
+    require('electron').ipcRenderer.on('ping', (event, message) => {
+      console.log(message) // Prints 'whoooooooh!'
+    })
+
+  </script>
 </html>

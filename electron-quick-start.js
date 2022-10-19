@@ -1,4 +1,4 @@
-const {app, Tray, Menu, BrowserWindow, autoUpdater, dialog} = require('electron');
+const {app, Tray, Menu, BrowserWindow, autoUpdater, dialog } = require('electron');
 const isDev = require("electron-is-dev");
 const os = require('os');
 const icon = __dirname + '/Favicon.png';
@@ -19,6 +19,14 @@ const platform = os.platform() + '_' + os.arch();  // usually returns darwin_64
 const version = app.getVersion();
 autoUpdater.setFeedURL(`https://desktop.lexivo.net/update/win64/${version}/stable`);
 
+// Настройка для протокола глубоких ссылок
+if (process.defaultApp) {
+    if (process.argv.length >= 2) {
+        app.setAsDefaultProtocolClient('app', process.execPath, [path.resolve(process.argv[1])])
+    }
+} else {
+    app.setAsDefaultProtocolClient('app')
+}
 
 const createWindow = () => {
     // Настройка стартового окна приложения
@@ -28,7 +36,11 @@ const createWindow = () => {
         minWidth: 400,
         minHeight: 600,
         autoHideMenuBar: true,
-        icon: __dirname + '/Favicon.png'
+        icon: __dirname + '/Favicon.png',
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false
+        }
     });
 
 
@@ -77,7 +89,35 @@ const createWindow = () => {
 
 }
 
-app.whenReady().then(createWindow);
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+    app.quit()
+} else {
+    app.on('second-instance', (event, commandLine, workingDirectory) => {
+        // Someone tried to run a second instance, we should focus our window.
+        if (mainWindow) {
+            if (mainWindow.isMinimized()) mainWindow.restore();
+            mainWindow.focus();
+            const dialogOpts = {
+                type: 'info',
+                title: 'Application Update',
+                message: commandLine.toString().substring(commandLine.toString().search('//') + 2),
+            }
+            dialog.showMessageBox(dialogOpts);
+            mainWindow.webContents.send('ping', 'whoooooooh!')
+        }
+    })
+
+    app.whenReady().then(()=>{
+        createWindow();
+    });
+
+    app.on('open-url', (event, url) => {
+        event.preventDefault();
+        dialog.showErrorBox('Welcome Back', `You arrived from: ${url}`)
+    })
+}
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
@@ -125,7 +165,6 @@ autoUpdater.on('error', (message) => {
     console.error('There was a problem updating the application');
     console.error(message);
 })
-
 
 function handleSquirrelEvent() {
     if (process.argv.length === 1) {
