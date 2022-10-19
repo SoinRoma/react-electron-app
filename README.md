@@ -24,6 +24,22 @@ npm run electron
 npm run build
 ```
 
+4. Сборка приложения в папку out
+```
+npm run package
+```
 
+5. Сборка приложения
+```
+npm run make
+```
 
+6. Сборка приложения под установщик
+```
+npm run package-windows
+```
 
+7. Создание установщика (обновления работают)
+```
+npm run windows-installer
+```
