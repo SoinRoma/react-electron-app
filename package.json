@@ -1,23 +1,46 @@
 {
   "name": "react-electron-app",
   "version": "1.0.3",
+  "author": "Soin Roman",
+  "description": "react-electron-app description",
   "private": true,
   "homepage": "./",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SoinRoma/react-electron-app"
+  },
   "dependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.67",
+    "@electron-forge/maker-deb": "^6.0.0-beta.67",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.67",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.67",
+    "@electron-forge/maker-zip": "^6.0.0-beta.67",
+    "@electron-forge/publisher-electron-release-server": "^6.0.0-beta.67",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "electron-forge": "^5.2.4",
+    "electron-is-dev": "^2.0.0",
+    "electron-packager": "^16.0.0",
+    "electron-squirrel-startup": "^1.0.0",
+    "electron-updater": "^5.3.0",
+    "electron-winstaller": "^5.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
-  "main": "src/electron-quick-start.js",
+  "main": "electron-quick-start.js",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "electron": "electron .",
-    "electron-dev": "set ELECTRON_START_URL=http://localhost:3000 && electron ."
+    "electron-dev": "set ELECTRON_START_URL=http://localhost:3000 && electron .",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "package-windows": "electron-packager . app --overwrite --asar --platform=win32 --arch=ia32 --icon=Favicon.ico --prune=true --out=release --version-string.CompanyName='Soin Roman'  --version-string.ProductName='App'",
+    "windows-installer": "node createinstaller.js"
   },
   "eslintConfig": {
     "extends": [
@@ -39,5 +62,34 @@
   },
   "devDependencies": {
     "electron": "^21.1.1"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "react-electron-app"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        }
+      ],
+      "publishers": [
+        {
+          "name": "@electron-forge/publisher-electron-release-server",
+          "config": {
+            "baseUrl": "https://desktop.lexivo.net",
+            "username": "admin",
+            "password": "123123d."
+          }
+        }
+      ]
+    }
   }
 }
