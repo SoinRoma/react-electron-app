@@ -3,17 +3,17 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <title>React App</title>
+    <link rel="icon" href="%PUBLIC_URL%/Favicon.ico" />
+    <title>React-Electron-App</title>
   </head>
   <body>
     <div id="root"></div>
   </body>
 
   <script>
+    // Слушатель канала, если будет глубокая ссылка, то распечатаем её
     require('electron').ipcRenderer.on('ping', (event, message) => {
-      console.log(message) // Prints 'whoooooooh!'
+      console.log(message);
     })
-
   </script>
 </html>
