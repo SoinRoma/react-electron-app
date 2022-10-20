@@ -1,31 +1,34 @@
 const {app, Tray, Menu, BrowserWindow, autoUpdater, dialog } = require('electron');
 const isDev = require("electron-is-dev");
 const os = require('os');
-const icon = __dirname + '/Favicon.png';
 const path = require('path');
 const url = require('url');
+const icon = __dirname + '/public/Favicon.png';
 let tray;
 let mainWindow;
 
+const APP_NAME = 'application';
+
+// Условия для настройки установщика
 if (require('electron-squirrel-startup')) return;
 
-// Настройки установщика
-if (handleSquirrelEvent(app)) {
+if (handle_squirrel_event(app)) {
     return;
 }
 
 // Настройка URL для обновления программы
-const platform = os.platform() + '_' + os.arch();  // usually returns darwin_64
-const version = app.getVersion();
+const platform = os.platform() + '_' + os.arch(); // Узнаем платформу
+const version = app.getVersion(); // Узнаем версию программы
+// В зависимости от платформы у нас будут разные ссылки
 autoUpdater.setFeedURL(`https://desktop.lexivo.net/update/win64/${version}/stable`);
 
-// Настройка для протокола глубоких ссылок
+// Настройка протокола глубоких ссылок (пртокол - название вашей программы)
 if (process.defaultApp) {
     if (process.argv.length >= 2) {
-        app.setAsDefaultProtocolClient('app', process.execPath, [path.resolve(process.argv[1])])
+        app.setAsDefaultProtocolClient(APP_NAME, process.execPath, [path.resolve(process.argv[1])]);
     }
 } else {
-    app.setAsDefaultProtocolClient('app')
+    app.setAsDefaultProtocolClient(APP_NAME);
 }
 
 const createWindow = () => {
@@ -36,7 +39,7 @@ const createWindow = () => {
         minWidth: 400,
         minHeight: 600,
         autoHideMenuBar: true,
-        icon: __dirname + '/Favicon.png',
+        icon: __dirname + '/public/Favicon.png',
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false
@@ -49,10 +52,12 @@ const createWindow = () => {
         protocol: 'file:',
         slashes: true
     });
-    mainWindow.loadURL(startUrl);
+
+    // Для продакшена запуска проекта
+    //mainWindow.loadURL(startUrl);
 
     // Для локального запуска проекта
-    //mainWindow.loadURL('http://localhost:3000');
+    mainWindow.loadURL('http://localhost:3000');
 
 
     // Действия закрыть приложения через X на свернуть приложение
@@ -69,12 +74,12 @@ const createWindow = () => {
                 app.exit();
             }
         }
-    ])
-    tray.setToolTip('APP');
+    ]);
+    tray.setToolTip(APP_NAME);
     tray.setContextMenu(contextMenu);
     tray.on('click', function () {
         mainWindow.show();
-        app.focus()
+        app.focus();
     });
 
     // Если в режиме разработчика, то открывать режим разработчика.
@@ -89,23 +94,19 @@ const createWindow = () => {
 
 }
 
+// Слушатель глубоких ссылок для приложения
 const gotTheLock = app.requestSingleInstanceLock();
-
 if (!gotTheLock) {
-    app.quit()
+    app.quit();
 } else {
+    // Если будет попытка заново открыть приложение, то фокусировать имеющиеся
     app.on('second-instance', (event, commandLine, workingDirectory) => {
-        // Someone tried to run a second instance, we should focus our window.
         if (mainWindow) {
             if (mainWindow.isMinimized()) mainWindow.restore();
             mainWindow.focus();
-            const dialogOpts = {
-                type: 'info',
-                title: 'Application Update',
-                message: commandLine.toString().substring(commandLine.toString().search('//') + 2),
-            }
-            dialog.showMessageBox(dialogOpts);
-            mainWindow.webContents.send('ping', 'whoooooooh!')
+            // Канал дле передачи глубокой ссылки
+            const link = commandLine.toString().substring(commandLine.toString().search('//') + 2);
+            mainWindow.webContents.send('ping', link);
         }
     })
 
@@ -113,47 +114,44 @@ if (!gotTheLock) {
         createWindow();
     });
 
-    app.on('open-url', (event, url) => {
-        event.preventDefault();
-        dialog.showErrorBox('Welcome Back', `You arrived from: ${url}`)
-    })
 }
 
+// Слушатель приложения (когда закрыты все окна, то выйти из приложения)
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
-        app.quit()
+        app.quit();
     }
 })
 
+// Слушатель приложения (когда оно готово, то создать окно)
 app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
         createWindow();
     }
 });
 
+// Слушатель обновления (когда есть обновление)
 autoUpdater.on("update-available", (_event) => {
-    const dialogOpts = {
+    const dialog_options = {
         type: 'info',
-        title: 'Application Update',
-        message: 'New update available, would you like to update now?',
-        buttons: ["Yes", "No"]
+        buttons: ['Ok'],
+        title: `${APP_NAME} Update`,
+        message: 'A new update is available. Wait while the update downloads.'
     }
-    dialog.showMessageBox(dialogOpts, buttonIndex => {
-        if (buttonIndex === 0) {
-            autoUpdater.downloadUpdate();
-        }
-    });
+    dialog.showMessageBox(dialog_options);
 })
 
+// Слушатель обновления (когда скачалось обновление)
 autoUpdater.on("update-downloaded", (_event, releaseNotes, releaseName) => {
-    const dialogOpts = {
+    const dialog_options = {
         type: 'info',
         buttons: ['Restart', 'Later'],
-        title: 'Application Update',
+        title: `${APP_NAME} Update`,
         message: process.platform === 'win32' ? releaseNotes : releaseName,
         detail: 'A new version has been downloaded. Restart the application to apply the updates.'
     };
-    dialog.showMessageBox(dialogOpts).then((returnValue) => {
+    dialog.showMessageBox(dialog_options).then((returnValue) => {
+        // Если нажали Restart, то перезагрузка приложения
         if (returnValue.response === 0){
             autoUpdater.quitAndInstall();
             app.exit();
@@ -161,12 +159,13 @@ autoUpdater.on("update-downloaded", (_event, releaseNotes, releaseName) => {
     })
 });
 
+// Слушатель обновления (если есть ошибка)
 autoUpdater.on('error', (message) => {
     console.error('There was a problem updating the application');
     console.error(message);
 })
 
-function handleSquirrelEvent() {
+function handle_squirrel_event() {
     if (process.argv.length === 1) {
         return false;
     }
