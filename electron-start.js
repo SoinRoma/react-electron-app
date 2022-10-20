@@ -105,7 +105,8 @@ if (!gotTheLock) {
             if (mainWindow.isMinimized()) mainWindow.restore();
             mainWindow.focus();
             // Канал дле передачи глубокой ссылки
-            const link = commandLine.toString().substring(commandLine.toString().search('//') + 2);
+            let link = commandLine.toString();
+            link = link.substring(link.search(`${APP_NAME}://`));
             mainWindow.webContents.send('ping', link);
         }
     })

@@ -13,7 +13,11 @@
   <script>
     // Слушатель канала, если будет глубокая ссылка, то распечатаем её
     require('electron').ipcRenderer.on('ping', (event, message) => {
-      console.log(message);
+      const url = new URL(message);
+      const pathname = url.pathname.replace(new RegExp('/','gi'),'');
+      const param = url.searchParams.get('to');
+      console.log(pathname);
+      console.log(param);
     })
   </script>
 </html>
