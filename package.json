@@ -1,14 +1,13 @@
 {
-  "name": "react-electron-app",
-  "version": "1.0.3",
-  "author": "Soin Roman",
-  "description": "react-electron-app description",
-  "private": true,
+  "name": "app",
+  "version": "1.0.0",
+  "author": "Your Name",
+  "description": "Your Description",
   "homepage": "./",
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "https://github.com/SoinRoma/react-electron-app"
+    "url": "Your Repository Url"
   },
   "dependencies": {
     "@electron-forge/cli": "^6.0.0-beta.67",
@@ -31,16 +30,15 @@
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
-  "main": "electron-quick-start.js",
+  "main": "electron-start.js",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "electron": "electron .",
-    "electron-dev": "set ELECTRON_START_URL=http://localhost:3000 && electron .",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "package-windows": "electron-packager . app --overwrite --asar --platform=win32 --arch=ia32 --icon=Favicon.ico --prune=true --out=release --version-string.CompanyName='Soin Roman'  --version-string.ProductName='App' --protocol=app --protocol-name='app'",
-    "windows-installer": "node createinstaller.js"
+    "package-windows": "electron-packager . app --overwrite --asar --platform=win32 --arch=ia32 --icon=public/Favicon.ico --prune=true --out=release --version-string.CompanyName='app'  --version-string.ProductName='app' --protocol=app --protocol-name='app'",
+    "windows-installer": "node electron-installer.js"
   },
   "eslintConfig": {
     "extends": [
@@ -77,7 +75,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "react-electron-app"
+            "name": "app"
           }
         },
         {
@@ -97,9 +95,9 @@
         {
           "name": "@electron-forge/publisher-electron-release-server",
           "config": {
-            "baseUrl": "https://desktop.lexivo.net",
-            "username": "admin",
-            "password": "123123d."
+            "baseUrl": "baseUrl",
+            "username": "username",
+            "password": "password"
           }
         }
       ]
