@@ -1,13 +1,13 @@
 {
-  "name": "app",
-  "version": "1.0.0",
-  "author": "Your Name",
-  "description": "Your Description",
+  "name": "application",
+  "version": "1.0.3",
+  "author": "Your Company Name",
+  "description": "application description",
   "homepage": "./",
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "Your Repository Url"
+    "url": "https://github.com/SoinRoma/react-electron-app"
   },
   "dependencies": {
     "@electron-forge/cli": "^6.0.0-beta.67",
@@ -37,7 +37,7 @@
     "electron": "electron .",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "package-windows": "electron-packager . app --overwrite --asar --platform=win32 --arch=ia32 --icon=public/Favicon.ico --prune=true --out=release --version-string.CompanyName='app'  --version-string.ProductName='app' --protocol=app --protocol-name='app'",
+    "package-windows": "electron-packager . application --overwrite --asar --platform=win32 --arch=ia32 --icon=public/Favicon.ico --prune=true --out=release --version-string.ProductName='application' --protocol=application --protocol-name='application'",
     "windows-installer": "node electron-installer.js"
   },
   "eslintConfig": {
@@ -75,7 +75,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "app"
+            "name": "application"
           }
         },
         {
@@ -95,9 +95,9 @@
         {
           "name": "@electron-forge/publisher-electron-release-server",
           "config": {
-            "baseUrl": "baseUrl",
-            "username": "username",
-            "password": "password"
+            "baseUrl": "https://desktop.lexivo.net",
+            "username": "admin",
+            "password": "123123d."
           }
         }
       ]
