@@ -4,7 +4,8 @@
 (create-react-app).
 
 С подробной инструкцией по настройке React и Electron вы можете ознакомиться на этом 
-[сайте](https://www.freecodecamp.org/news/building-an-electron-application-with-create-react-app-97945861647c/).
+[сайте](https://www.freecodecamp.org/news/building-an-electron-application-with-create-react-app-97945861647c/)
+и на этом [сайте](https://polyakovdmitriy.ru/create-react-app-electron/).
 
 ### Предварительные настройки, которые нужно изменить
 
